@@ -735,6 +735,20 @@ where
         }
     }
 
+    /// Sets whether or not the [process ID] of the current thread is displayed
+    /// when formatting events.
+    ///
+    /// [process ID]: std::process::id
+    pub fn with_process_id(
+        self,
+        display_process_id: bool,
+    ) -> SubscriberBuilder<N, format::Format<L, T>, F, W> {
+        SubscriberBuilder {
+            inner: self.inner.with_process_id(display_process_id),
+            ..self
+        }
+    }
+
     /// Sets the subscriber being built to use a less verbose formatter.
     ///
     /// See [`format::Compact`].

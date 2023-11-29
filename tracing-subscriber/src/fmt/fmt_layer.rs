@@ -528,6 +528,17 @@ where
         }
     }
 
+    /// Sets whether or not the [process ID] of the current thread is displayed
+    /// when formatting events.
+    ///
+    /// [process ID]: std::process::id
+    pub fn with_process_id(self, display_process_id: bool) -> Layer<S, N, format::Format<L, T>, W> {
+        Layer {
+            fmt_event: self.fmt_event.with_process_id(display_process_id),
+            ..self
+        }
+    }
+
     /// Sets the layer being built to use a [less verbose formatter][super::format::Compact].
     pub fn compact(self) -> Layer<S, N, format::Format<format::Compact, T>, W>
     where

@@ -196,6 +196,10 @@ where
 
         self.format_timestamp(&mut writer)?;
 
+        if self.display_process_id {
+            write!(writer, "PID({}) ", std::process::id())?;
+        }
+
         let style = if self.display_level && writer.has_ansi_escapes() {
             Pretty::style_for(meta.level())
         } else {

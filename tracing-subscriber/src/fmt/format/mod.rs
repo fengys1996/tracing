@@ -407,6 +407,7 @@ pub struct Format<F = Full, T = SystemTime> {
     pub(crate) display_level: bool,
     pub(crate) display_thread_id: bool,
     pub(crate) display_thread_name: bool,
+    pub(crate) display_process_id: bool,
     pub(crate) display_filename: bool,
     pub(crate) display_line_number: bool,
 }
@@ -597,6 +598,7 @@ impl Default for Format<Full, SystemTime> {
             display_level: true,
             display_thread_id: false,
             display_thread_name: false,
+            display_process_id: false,
             display_filename: false,
             display_line_number: false,
         }
@@ -617,6 +619,7 @@ impl<F, T> Format<F, T> {
             display_level: self.display_level,
             display_thread_id: self.display_thread_id,
             display_thread_name: self.display_thread_name,
+            display_process_id: self.display_process_id,
             display_filename: self.display_filename,
             display_line_number: self.display_line_number,
         }
@@ -656,6 +659,7 @@ impl<F, T> Format<F, T> {
             display_level: self.display_level,
             display_thread_id: self.display_thread_id,
             display_thread_name: self.display_thread_name,
+            display_process_id: self.display_process_id,
             display_filename: true,
             display_line_number: true,
         }
@@ -687,6 +691,7 @@ impl<F, T> Format<F, T> {
             display_level: self.display_level,
             display_thread_id: self.display_thread_id,
             display_thread_name: self.display_thread_name,
+            display_process_id: self.display_process_id,
             display_filename: self.display_filename,
             display_line_number: self.display_line_number,
         }
@@ -716,6 +721,7 @@ impl<F, T> Format<F, T> {
             display_level: self.display_level,
             display_thread_id: self.display_thread_id,
             display_thread_name: self.display_thread_name,
+            display_process_id: self.display_process_id,
             display_filename: self.display_filename,
             display_line_number: self.display_line_number,
         }
@@ -732,6 +738,7 @@ impl<F, T> Format<F, T> {
             display_level: self.display_level,
             display_thread_id: self.display_thread_id,
             display_thread_name: self.display_thread_name,
+            display_process_id: self.display_process_id,
             display_filename: self.display_filename,
             display_line_number: self.display_line_number,
         }
@@ -790,6 +797,17 @@ impl<F, T> Format<F, T> {
     pub fn with_file(self, display_filename: bool) -> Format<F, T> {
         Format {
             display_filename,
+            ..self
+        }
+    }
+
+    /// Sets whether or not the [process ID] of the current thread is displayed
+    /// when formatting events.
+    ///
+    /// [process ID]: std::process::id
+    pub fn with_process_id(self, display_process_id: bool) -> Format<F, T> {
+        Format {
+            display_process_id,
             ..self
         }
     }
@@ -924,6 +942,10 @@ where
 
         self.format_timestamp(&mut writer)?;
 
+        if self.display_process_id {
+            write!(writer, "PID({}) ", std::process::id())?;
+        }
+
         if self.display_level {
             let fmt_level = {
                 #[cfg(feature = "ansi")]
@@ -1051,6 +1073,10 @@ where
         }
 
         self.format_timestamp(&mut writer)?;
+
+        if self.display_process_id {
+            write!(writer, "PID({}) ", std::process::id())?;
+        }
 
         if self.display_level {
             let fmt_level = {
